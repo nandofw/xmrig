@@ -573,7 +573,7 @@ void xmrig::EthStratumClient::onSubscribeResponse(const rapidjson::Value &result
             m_extraNonce2Size = arr[2].GetUint();
         }
         if ((arr.Size() > 3) ) {
-            setExtraNonce(arr[3]);
+            setExtraNonce2(arr[3]);
         }else{
             m_extraNonce2 = { 0, "00000000" };
         }
