@@ -254,8 +254,7 @@ void xmrig::EthStratumClient::parseNotification(const char *method, const rapidj
 
         job.setAlgorithm(algo);
         job.setExtraNonce(m_extraNonce.second);
-        job.setExtraNonce(m_extraNonce2.second);
-
+        job.setExtraNonce2(m_extraNonce2.second);
         std::stringstream s;
 
 #       ifdef XMRIG_ALGO_GHOSTRIDER

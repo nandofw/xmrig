@@ -72,7 +72,7 @@ public:
     inline const Buffer &seed() const                   { return m_seed; }
     inline const String &clientId() const               { return m_clientId; }
     inline const String &extraNonce() const             { return m_extraNonce; }
-    inline const String &extraNonce2() const             { return m_extraNonce2; }
+    inline const String &extraNonce2() const            { return m_extraNonce2; }
     inline const String &id() const                     { return m_id; }
     inline const String &poolWallet() const             { return m_poolWallet; }
     inline const uint32_t *nonce() const                { return reinterpret_cast<const uint32_t*>(m_blob + nonceOffset()); }
@@ -95,7 +95,7 @@ public:
     inline void setBackend(uint32_t backend)            { m_backend = backend; }
     inline void setClientId(const String &id)           { m_clientId = id; }
     inline void setExtraNonce(const String &extraNonce) { m_extraNonce = extraNonce; }
-    inline void setExtraNonce2(const String &extraNonce) { m_extraNonce2 = extraNonce; }
+    inline void setExtraNonce2(const String &extra2)    { m_extraNonce2 = extra2; }
     inline void setHeight(uint64_t height)              { m_height = height; }
     inline void setIndex(uint8_t index)                 { m_index = index; }
     inline void setPoolWallet(const String &poolWallet) { m_poolWallet = poolWallet; }

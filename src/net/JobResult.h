@@ -76,7 +76,7 @@ public:
         jobId(job.id()),
         backend(job.backend()),
         nonce(0),
-        extranonce(""),
+        extranonce(job.extraNonce2()),
         diff(0)
     {
     }
