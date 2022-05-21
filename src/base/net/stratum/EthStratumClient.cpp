@@ -78,7 +78,8 @@ int64_t xmrig::EthStratumClient::submit(const JobResult& result)
 
 #   ifdef XMRIG_ALGO_GHOSTRIDER
     if (m_pool.algorithm().id() == Algorithm::GHOSTRIDER_RTM) {
-        params.PushBack(Value("00000000000000000000000000000000", static_cast<uint32_t>(m_extraNonce2Size * 2)), allocator);
+        //params.PushBack(Value("00000000000000000000000000000000", static_cast<uint32_t>(m_extraNonce2Size * 2)), allocator);
+        params.PushBack(result.extranonce.toJSON(), allocator);
         params.PushBack(Value(m_ntime.data(), allocator), allocator);
 
         std::stringstream s;
@@ -253,6 +254,7 @@ void xmrig::EthStratumClient::parseNotification(const char *method, const rapidj
 
         job.setAlgorithm(algo);
         job.setExtraNonce(m_extraNonce.second);
+        job.setExtraNonce(m_extraNonce2.second);
 
         std::stringstream s;
 
@@ -275,7 +277,8 @@ void xmrig::EthStratumClient::parseNotification(const char *method, const rapidj
             // Merkle tree root
             std::string blob = arr[2].GetString();
             blob += m_extraNonce.second;
-            blob.append(m_extraNonce2Size * 2, '0');
+            blob += m_extraNonce2.second;
+            //blob.append(m_extraNonce2Size * 2, '0');
             blob += arr[3].GetString();
 
             uint8_t merkle_root[64];
@@ -441,6 +444,37 @@ void xmrig::EthStratumClient::setExtraNonce(const rapidjson::Value &nonce)
     m_extraNonce = { std::stoull(extra_nonce_str, nullptr, 16), s };
 }
 
+void xmrig::EthStratumClient::setExtraNonce2(const rapidjson::Value &nonce)
+{
+    if (!nonce.IsString()) {
+        throw std::runtime_error("invalid mining.subscribe response: extra nonce is not a string");
+    }
+
+    const char *s = nonce.GetString();
+    size_t len    = nonce.GetStringLength();
+
+    // Skip "0x"
+    if ((len >= 2) && (s[0] == '0') && (s[1] == 'x')) {
+        s += 2;
+        len -= 2;
+    }
+
+    if (len & 1) {
+        throw std::runtime_error("invalid mining.subscribe response: extranonce2 has an odd number of hex chars");
+    }
+
+    if (len > 8) {
+        throw std::runtime_error("Invalid mining.subscribe response: extranonce2 is too long");
+    }
+
+    std::string extra_nonce_str(s);
+    extra_nonce_str.resize(16, '0');
+
+    LOG_DEBUG("[%s] extra nonce set to %s", url(), s);
+
+    m_extraNonce2 = { std::stoull(extra_nonce_str, nullptr, 16), s };
+}
+
 
 const char *xmrig::EthStratumClient::errorMessage(const rapidjson::Value &error)
 {
@@ -538,6 +572,11 @@ void xmrig::EthStratumClient::onSubscribeResponse(const rapidjson::Value &result
         if ((arr.Size() > 2) && (arr[2].IsUint())) {
             m_extraNonce2Size = arr[2].GetUint();
         }
+        if ((arr.Size() > 3) ) {
+            setExtraNonce(arr[3]);
+        }else{
+            m_extraNonce2 = { 0, "00000000" };
+        }
 #       endif
 
         if (m_pool.isNicehash()) {
@@ -551,6 +590,7 @@ void xmrig::EthStratumClient::onSubscribeResponse(const rapidjson::Value &result
         LOG_ERR("%s " RED("%s"), tag(), ex.what());
 
         m_extraNonce = { 0, {} };
+        m_extraNonce2 = { 0, {} };
     }
 }
 

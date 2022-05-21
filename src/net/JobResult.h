@@ -50,6 +50,7 @@ public:
         jobId(job.id()),
         backend(job.backend()),
         nonce(nonce),
+        extranonce(job.extraNonce2()),
         diff(job.diff())
     {
         memcpy(m_result, result, sizeof(m_result));
@@ -75,6 +76,7 @@ public:
         jobId(job.id()),
         backend(job.backend()),
         nonce(0),
+        extranonce(""),
         diff(0)
     {
     }
@@ -94,6 +96,7 @@ public:
     const uint32_t backend;
     const uint64_t nonce;
     const uint64_t diff;
+    const String extranonce;
 
 private:
     uint8_t m_result[32]     = { 0 };

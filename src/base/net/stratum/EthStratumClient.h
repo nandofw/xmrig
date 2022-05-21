@@ -46,6 +46,7 @@ protected:
     void parseNotification(const char *method, const rapidjson::Value &params, const rapidjson::Value &error) override;
 
     void setExtraNonce(const rapidjson::Value &nonce);
+    void setExtraNonce2(const rapidjson::Value &nonce);
 
 #   ifdef XMRIG_ALGO_GHOSTRIDER
     inline void setExtraNonce2Size(uint64_t size)   { m_extraNonce2Size = size; }
@@ -61,6 +62,7 @@ private:
 
     bool m_authorized   = false;
     std::pair<uint64_t, String> m_extraNonce{};
+    std::pair<uint64_t, String> m_extraNonce2{};
 
 #   ifdef XMRIG_ALGO_GHOSTRIDER
     uint64_t m_extraNonce2Size = 0;
